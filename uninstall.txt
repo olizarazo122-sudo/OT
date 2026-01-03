@@ -1,0 +1,69 @@
+[Uninstall]
+co.indieplay.viajematematico true U
+com.adobe.arkis true	U
+com.rarlab.rar false U
+com.adobe.flashplayer true U
+com.issess.flashplayer true U
+co.appsolution.ukanbook true U
+com.educar.educar true U
+com.adobe.air true U
+com.boronstudios.arkis true U
+com.google.android.calendar true D
+com.android.contacts true D
+com.google.android.apps.maps true D
+com.google.android.apps.uploader true D
+com.android.music true D
+org.videoplayer3 true D
+com.android.gallery3d true D
+com.google.android.voicesearch true D
+co.com.heritagegroup.app true D
+android.rk.RockVideoPlayer true D
+com.android.browser true D
+com.android.email true D
+org.usc.student true D
+com.google.android.voicesearch true D
+com.android.providers.downloads true D
+com.google.android.location true D
+com.google.android.partnersetup true D
+com.google.android.feedback true D
+com.google.android.marvin.talkback true D
+com.google.android.gm true D
+com.google.android.tts true D
+com.google.android.backup true D
+com.android.rk true D
+com.android.rk.mediafloat true D
+android.rockchip.update.service true D
+com.android.vending true D
+com.google.android.gsf.login true D
+com.google.android.gsf true D
+com.google.android.googlequicksearchbox true D
+com.google.android.gms true D
+com.quickoffice.android true D
+com.android.videoeditor true D
+com.android.speechrecorder true D
+com.android.myid true D
+com.android.launcher3 true D
+com.android.phone true D
+com.android.providers.telephony true D
+com.android.mms true D
+com.android.smspush true D
+com.android.stk true D
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

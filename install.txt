@@ -1,0 +1,25 @@
+
+[apps]
+
+holo-launcher true I
+kiss-launcher false I
+nova-launcher false I
+peek-launcher false I
+via-browser true I 
+opera-mini false I
+simple-keyboard true I
+fdroid true I
+quick-pick false I
+oi-file-manager false I
+mixplorer true I
+micro-g false  I
+greenify true I
+anki true I
+logical-defence true I
+office-suit true I
+microbit false I
+pocket-code true I
+scratch true I
+
+
+
