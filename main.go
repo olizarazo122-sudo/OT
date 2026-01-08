@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"sync"
 	"time"
 
 	//"io"
@@ -16,6 +17,11 @@ import (
 )
 
 var ops string
+var devices = []string{}
+var fs1 sync.WaitGroup
+var fs2 sync.WaitGroup
+var fs3 sync.WaitGroup
+var adbss string
 
 func main() {
 	fmt.Println("###############################################")
@@ -44,12 +50,45 @@ func main() {
 	fmt.Scanln(&state)
 	fmt.Println(state)
 
+	if runtime.GOOS == "windows" {
+		adbss = "./adb.exe"
+	} else {
+		adbss = "./adb"
+	}
+
+	clear()
+
+	fmt.Println()
+	fmt.Println(aurora.Red("el proceso se puede ejecutar hasta con 3 tablets simultaneamente"))
+	fmt.Println(aurora.Red("Por favor seleccione el/los dispositivos"))
+
+	selectDevices()
+
 	if state == "Y" || state == "y" {
 		fmt.Println(aurora.Green("Iniciando"))
-		installapp()
-		uninstallapp()
-		optimdevice()
-		clear()
+
+		cantdevices := len(devices)
+		for i := 0; i < 3; i++ {
+			if i == 0 {
+				fs1.Add(cantdevices)
+				for e := 0; e < cantdevices; e++ {
+					go optimdevice(devices[e])
+				}
+				fs1.Wait()
+			} else if i == 1 {
+				fs2.Add(cantdevices)
+				for e := 0; e < cantdevices; e++ {
+					go installapp(devices[e])
+				}
+				fs2.Wait()
+			} else if i == 2 {
+				fs3.Add(cantdevices)
+				for e := 0; e < cantdevices; e++ {
+					go uninstallapp(devices[e])
+				}
+				fs3.Wait()
+			}
+		}
 
 		fmt.Println(aurora.Green("El proceso termino"))
 		fmt.Println(aurora.Yellow("Por favor reinicie la tablet"))
@@ -61,89 +100,115 @@ func main() {
 	}
 }
 
-func optimdevice() {
-	clear()
+func selectDevices() {
+	cmd := exec.Command("./adb", "devices", "-l")
 
 	if runtime.GOOS == "linux" {
-		cmd := exec.Command("./adb", "shell", "settings", "put", "global", "window_animation_scale", "0")
-		cmd.Dir = "src/adb-linux"
-		cmd.Run()
-		cmd_one := exec.Command("./adb", "shell", "settings", "put", "global", "transition_animation_scale", "0")
-		cmd_one.Dir = "src/adb-linux"
-		cmd_one.Run()
-		cmd_two := exec.Command("./adb", "shell", "settings", "put", "global", "animator_duration_scale", "0")
-		cmd_two.Dir = "src/adb-linux"
-		cmd_two.Run()
-		cmd_three := exec.Command("./adb", "shell", "settings", "put", "global", "background_process_limit", "3")
-		cmd_three.Dir = ("src/adb-linux")
-		cmd_three.Run()
-		cmd_for := exec.Command("./adb", "shell", "settings", "put", "global", "force_hw_ui", "1")
-		cmd_for.Dir = ("src/adb-linux")
-		cmd_for.Run()
-		cmd_five := exec.Command("./adb", "shell", "settings", "put", "global", "mobile_data_always_on", "0")
-		cmd_five.Dir = ("src/adb-linux")
-		cmd_five.Run()
-		cmd_t := exec.Command("./adb", "shell", "date", "%m%d%H%M%Y.%S")
-		cmd_t.Dir = "src/adb-linux"
-		cmd_t.Run()
-
-	} else if runtime.GOOS == "windows" {
-
-		cmd := exec.Command("./adb.exe", "shell", "settings", "put", "global", "window_animation_scale", "0")
-		cmd.Dir = "src/adb-windows"
-		cmd.Run()
-		cmd_one := exec.Command("./adb.exe", "shell", "settings", "put", "global", "transition_animation_scale", "0")
-		cmd_one.Dir = "src/adb-windows"
-		cmd_one.Run()
-		cmd_two := exec.Command("./adb.exe", "shell", "settings", "put", "global", "animator_duration_scale", "0")
-		cmd_two.Dir = "src/adb-windows"
-		cmd_two.Run()
-		cmd_three := exec.Command("./adb.exe", "shell", "settings", "put", "global", "background_process_limit", "3")
-		cmd_three.Dir = ("src/adb-windows")
-		cmd_three.Run()
-		cmd_for := exec.Command("./adb.exe", "shell", "settings", "put", "global", "force_hw_ui", "1")
-		cmd_for.Dir = ("src/adb-windows")
-		cmd_for.Run()
-		cmd_five := exec.Command("./adb.exe", "shell", "settings", "put", "global", "mobile_data_always_on", "0")
-		cmd_five.Dir = ("src/adb-windows")
-		cmd_five.Run()
-		cmd_t := exec.Command("adb,exe", "shell", "date", "%m%d%H%M%Y.%S")
-		cmd_t.Dir = "src/adb-windows"
-		cmd_t.Run()
+		cmd.Dir = "adb/linux"
 	} else if runtime.GOOS == "darwin" {
-		cmd := exec.Command("./adb", "shell", "settings", "put", "global", "window_animation_scale", "0")
-		cmd.Dir = "src/adb-mac"
-		cmd.Run()
-		cmd_one := exec.Command("./adb", "shell", "settings", "put", "global", "transition_animation_scale", "0")
-		cmd_one.Dir = "src/adb-mac"
-		cmd_one.Run()
-		cmd_two := exec.Command("./adb", "shell", "settings", "put", "global", "animator_duration_scale", "0")
-		cmd_two.Dir = "src/adb-mac"
-		cmd_two.Run()
-		cmd_three := exec.Command("./adb", "shell", "settings", "put", "global", "background_process_limit", "3")
-		cmd_three.Dir = ("src/adb-mac")
-		cmd_three.Run()
-		cmd_for := exec.Command("./adb", "shell", "settings", "put", "global", "force_hw_ui", "1")
-		cmd_for.Dir = ("src/adb-mac")
-		cmd_for.Run()
-		cmd_five := exec.Command("./adb", "shell", "settings", "put", "global", "mobile_data_always_on", "0")
-		cmd_five.Dir = ("src/adb-mac")
-		cmd_five.Run()
-		cmd_t := exec.Command("./adb", "shell", "date", "%m%d%H%M%Y.%S")
-		cmd_t.Dir = "src/adb-mac"
-		cmd_t.Run()
-
+		cmd.Dir = "adb/mac"
+	} else if runtime.GOOS == "windows" {
+		cmd.Dir = "adb/windows"
 	}
+
+	out, err := cmd.Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+	os.WriteFile("adb.txt", out, 0644)
+
+	file, err := os.Open("adb.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		linea := scanner.Text()
+		device := strings.SplitN(linea, " ", 7)
+
+		if len(device) == 7 {
+			serial := device[0]
+
+			modelo := device[5]
+			dispositivo := device[6]
+
+			fmt.Print(modelo)
+			fmt.Print("  ")
+			fmt.Print(dispositivo)
+			fmt.Println("")
+
+			var dv string
+			fmt.Println("Si este dispositivo se optimizara por favor marcar y/n")
+			fmt.Scan(&dv)
+
+			if dv == "Y" || dv == "y" {
+				devices = append(devices, serial)
+			}
+
+		}
+	}
+
+	os.Remove("adb.txt")
+
+}
+
+func optimdevice(device string) {
+
+	defer fs1.Done()
+	clear()
+
+	dt := time.Now()
+	time := dt.Format("20060102/150405")
+
+	cmd := exec.Command("adb")
+	if runtime.GOOS == "linux" {
+		cmd.Dir = "adb/linux"
+	} else if runtime.GOOS == "darwin" {
+		cmd.Dir = "adb/mac"
+	} else if runtime.GOOS == "windows" {
+		cmd.Dir = "adb/windows"
+	}
+
+	cmd = exec.Command(adbss, "-s", device, "shell", "settings", "put", "global", "window_animation_scale", "0")
+	cmd.Run()
+	cmd = exec.Command(adbss, "-s", device, "shell", "settings", "put", "global", "window_animation_scale", "0")
+	cmd.Run()
+	cmd = exec.Command(adbss, "-s", device, "shell", "settings", "put", "global", "transition_animation_scale", "0")
+	cmd.Run()
+	cmd = exec.Command(adbss, "-s", device, "shell", "settings", "put", "global", "animator_duration_scale", "0")
+	cmd.Run()
+	cmd = exec.Command(adbss, "-s", device, "shell", "settings", "put", "global", "background_process_limit", "3")
+	cmd.Run()
+	cmd = exec.Command(adbss, "-s", device, "shell", "settings", "put", "global", "force_hw_ui", "1")
+	cmd.Run()
+	cmd = exec.Command(adbss, "-s", device, "shell", "settings", "put", "global", "mobile_data_always_on", "0")
+	cmd.Run()
+	cmd = exec.Command(adbss, "-s", device, "shell", "date", time)
+	cmd.Run()
 
 }
 
 func clear() {
-	fmt.Println("limpiando consola")
-	fmt.Print("\033[2J")
+
+	cmd := exec.Command("adb") //provisional
+
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("cmd", "/c", "cls")
+	} else if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+		cmd = exec.Command("clear")
+	}
+
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
 
 }
 
-func installapp() {
+func installapp(device string) {
+	defer fs2.Done()
 	clear()
 
 	file, err := os.Open("install.txt")
@@ -167,46 +232,23 @@ func installapp() {
 			fmt.Print(" " + install)
 			fmt.Println()
 
-			if runtime.GOOS == "linux" {
-				if install == "true" {
+			if install == "true" {
+				path := "../../apks/" + app + ".apk"
+				path = strings.TrimSpace(path)
 
-					path := "../../apks/" + app + ".apk"
-					path = strings.TrimSpace(path)
+				cmd := exec.Command(adbss, "-s", device, "install", path)
+				cmd.Stdout = os.Stdout
+				cmd.Stderr = os.Stderr
 
-					cmd := exec.Command("./adb", "install", path)
-					cmd.Dir = "src/adb-linux"
-					cmd.Stdout = os.Stdout
-					cmd.Stderr = os.Stderr
-					cmd.Run()
-
+				if runtime.GOOS == "linux" {
+					cmd.Dir = "adb/linux"
+				} else if runtime.GOOS == "darwin" {
+					cmd.Dir = "adb/mac"
+				} else if runtime.GOOS == "windows" {
+					cmd.Dir = "adb/windows"
 				}
-			} else if runtime.GOOS == "windows" {
-				if install == "true" {
 
-					path := "../../apks/" + app + ".apk"
-					path = strings.TrimSpace(path)
-
-					cmd := exec.Command("./adb.exe", "install", path)
-					cmd.Dir = "src/adb-windows"
-					cmd.Stdout = os.Stdout
-					cmd.Stderr = os.Stderr
-					cmd.Run()
-
-				}
-			} else if runtime.GOOS == "darwin" {
-
-				if install == "true" {
-
-					path := "../../apks/" + app + ".apk"
-					path = strings.TrimSpace(path)
-
-					cmd := exec.Command("./adb", "install", path)
-					cmd.Dir = "src/adb-mac"
-					cmd.Stdout = os.Stdout
-					cmd.Stderr = os.Stderr
-					cmd.Run()
-
-				}
+				cmd.Run()
 			}
 
 		}
@@ -215,8 +257,9 @@ func installapp() {
 
 }
 
-func uninstallapp() {
+func uninstallapp(device string) {
 
+	defer fs3.Done()
 	file, err := os.Open("uninstall.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -239,55 +282,26 @@ func uninstallapp() {
 			fmt.Print(" " + uninstall)
 			fmt.Println()
 
-			if uninstall == "true" {
-				if runtime.GOOS == "linux" {
+			cmd := exec.Command("adb") //provisional
 
-					if action == "U" {
-						cmd := exec.Command("./adb", "uninstall", app)
-						cmd.Dir = "src/adb-linux"
-						cmd.Stdout = os.Stdout
-						cmd.Stderr = os.Stderr
-						cmd.Run()
-					} else {
-						cmd := exec.Command("./adb", "shell", "pm", "disable-user", "--user", "0", app)
-						cmd.Dir = "src/adb-linux"
-						cmd.Stdout = os.Stdout
-						cmd.Stderr = os.Stderr
-						cmd.Run()
-					}
-
-				} else if runtime.GOOS == "windows" {
-
-					if action == "U" {
-						cmd := exec.Command("./adb.exe", "uninstall", app)
-						cmd.Dir = "src/windows"
-						cmd.Stdout = os.Stdout
-						cmd.Stderr = os.Stderr
-						cmd.Run()
-					} else {
-						cmd := exec.Command("./adb.exe", "shell", "pm", "disable-user", "--user", "0", app)
-						cmd.Dir = "src/adb-windows"
-						cmd.Stdout = os.Stdout
-						cmd.Stderr = os.Stderr
-						cmd.Run()
-					}
-
-				} else if runtime.GOOS == "darwin" {
-					if action == "U" {
-						cmd := exec.Command("./adb", "uninstall", app)
-						cmd.Dir = "src/adb-mac"
-						cmd.Stdout = os.Stdout
-						cmd.Stderr = os.Stderr
-						cmd.Run()
-					} else {
-						cmd := exec.Command("./adb", "shell", "pm", "disable-user", "--user", "0", app)
-						cmd.Dir = "src/adb-mac"
-						cmd.Stdout = os.Stdout
-						cmd.Stderr = os.Stderr
-						cmd.Run()
-					}
-				}
+			if action == "U" {
+				cmd = exec.Command(adbss, "-s", device, "uninstall", app)
+			} else if action == "D" {
+				cmd = exec.Command(adbss, "-s", device, "shell", "pm", "disable-user", "--user", "0", app)
 			}
+
+			if runtime.GOOS == "linux" {
+				cmd.Dir = "adb/linux"
+			} else if runtime.GOOS == "darwin" {
+				cmd.Dir = "adb/mac"
+			} else if runtime.GOOS == "windows" {
+				cmd.Dir = "adb/windows"
+			}
+
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			cmd.Run()
+
 		}
 
 	}

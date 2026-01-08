@@ -1,96 +1,92 @@
 # OT
-Script CLI para realizar una serie de optimizaciones a la tablet HTG 1078 con Soc RK 3066
 
-Optimización de Tablet [OT]
-Este pequeño proyecto tiene la finalidad de mejorar el rendimiento de las tablet HTG 1078 Gob con Soc rk3066 
-debido a una version de android casi que obsoleta y la nesesidad de tener estas tablets en funcionamiento
+Este proyecto nacío por la necesidad de alargar la vida util de las tablets "HTG 1078-GOB" con android 4.4
 
-Caracteristicas
-1. Es una herramienta 100% CLI
-2. Se basa en la herramienta ADB
-3. Esta disponible para los 3 OS mas usados en ARM/x64
-
-Requisitos
-
-1. El ADB esta integrado por lo que no es nesesario descargarlo
-
-
-CONFIGURACIÓN
-
-el ejecutable esta acompañado de 2 archivos
-
-1.install.text
-
-    este se encarga de todas las apps se instalaran, al ingresar vera esta configuración
-
-    app true I  -> indica que la app se instalara
-    app false I -> la app no se instalara
-
-    el nombre app es exactamente de el instalador apk que esta en la carpeta apks
-
-    si quieres agregar nuevas apps junto con el script debes colocar el instalador en la carpeta apks, copiar el nombre
-    pegarlo en install sin .apk acompañado de true e I
-
-      PARA EL CORRECTO FUNCIONAMIENTO SOLO DEBE HABER UNA CONFIGURACIÓN POR LINEA
+**Automatizando la optimización de estas tablets**
 
 
 
-2.uninstall.txt
+![Presentación1](./img/im4.png)
 
-    similar a lo anterior tiene la estructura
+## 🛠️ Tecnologías usadas
 
-    Paquete true U/D 
+Este proyecto tiene como motor las siguientes tecnologías 
 
-    paquete -> el servicio con el que se trabaja
-    true -> si se tomara en cuenta o no 
-    U/D -> la acción que se llevara a cabo, U - Uninstall , D - Disable
+1. Golang
+2. ADB
+---
+## 📦 Instalación
 
-    TENGA EN CUENTA QUE HAY PAQUETES QUE NO SE PUEDEN ELIMINAR TOTALMENTE O DESACTIVAR PARA EL CORRECTO FUNCIONAMIENTO DE EL OS
+para usar este OS en las distintas plataformas damos las siguientes Instrucciones
 
-    PARA EL CORRECTO FUNCIONAMIENTO SOLO DEBE HABER UNA CONFIGURACIÓN POR LINEA
-El ejecutable se acompaña de 2 carpetas
+ 1. descargar el core para tu OS (o el core completo)
+ 2. descargar el conjunto de APK
+ 3. descomprimir ambos archivos
+ 4. copiar/mover todos los apks a la carpeta apks dentro de el core 
+ 5. modificar el install.txt y el uninstall.txt en caso de ser nesesario
 
-  1.**apks** : donde estan todos los apk
-  2.**src** : donde se guardan 3 subcarpetas
-    1.**adb-linux**
-    2.**adb-windows**
-    3.**adb-mac**
+ ![Descomprimiendo](./img/im1.png)
 
-    cada una de ellas tiene en su interior el adb
+---
+## 🚀 Uso
 
-Uso
+1. Abrir la carpeta del core en consola
+2. Ejecutar el archivo correspondiente (si tiene fallos usar sudo/admin)
+
++ Linux
+`./OT_linux `
++ Windows
+`./OT_windows.exe `
++ MacOS
+`./OT_mac_intel `
+
+![ejecutando](./img/im3.png)
+
+3. Formatear la tablet
+
+para formatear la tablet siga los siguientes pasos
+
+`Configuración -> copia de Seguridad -> Restablecer datos de fábricaa  -> Restablecer tablet`
+
+4. Activar depuración USB
+
+para activar la depuración USB siga los siguientes pasos
+
+`Configuración -> información de la tablet -> (presionar 7 veces Número de compilación) -> Opciones de desarrollo -> Activar depuración USB`
+
+5. Presionar "Y"
+6. Selecciónar el Dispositivo
+7. Esperar a que termine el Proceso 
+
+---
+## 📂Modificando
+
+El ejecutable requiere de 2 archivos install.txt y uninstall.txt
+
+### Install.txt -> contiene las aplicaciones que se instalaran
+
+`name true I` -> se instalara
+
+`name2 false I` -> no se instalara
+
+**El nombre debe ir sin APK**
 
 
-[Pasos previos]
-1. tener la tablet formateada
-    Ajustes -> Copia de Seguridad -> Restablecer datos de fábrica -> Restablecer Tablet (Borrar Targeta SD activada)
 
-2. tener la tablet en modo de desarrollador y la depuracion USB activada
-    Ajustes -> Información de la tablet -> (Presionar Número de compilación 7 veces)
+### Uninstall.txt -> contiene las aplicaciones y servicios que se Desistalaran o se desactivaran
 
+`name true D` -> se desactivara
 
-3. la tablet solo se puede conectar una ve esten cumplidos los 2 anteriores
+`name2 true U` -> se desinstalarán
 
-4. descargar el .zip
-5. descomprimirlo en un lugar accesible
-6. ejecutar el programa correspondiente a su OS / Arquitectura
+---
+## ⚠️ Notas
+*Para maxima eficiencia se recomienda descargar la version core (completa) y portarla en una memoria USB*
 
-[Windows]
-    En windows el uso de la herramienta esta condicionado al uso de PowerShell para funcionar
+para usar esta herramienta se recomienda abrirlo desde una CLI para mejor funcionamiento
 
-    se debe abrir el archivo correspondiente a windows en su respectiva arquitectura y ejecutarlo
-    si tiene problemas para funcionar se debe correr como admin
+**puede nesesitar permisos de admin/sudo dependiendo el OS**
 
-    ./OT_windows_x64.exe    
-    ./OT_windows_arm.exe
+**los apks son autoria de sus respectivos autores**
 
-[Mac/Linux]
-
-    Se debe seleccionar el ejecutable correspondiente a tu OS y arquitectura
-
-    ./OT_linux_x64/arm
-    ./OT_mac_intel/arm
-
-    generalmente en mac es probable que se deba ejecutar como admin para que funcione correctamente
-
-este proyecto esta publicado bajo la licencia MIT consulte el archivo LICENSE
+**PUBLICADA BAJO LA LICENCIA MIT**
